@@ -1,0 +1,2 @@
+service: "service:svc"
+description: "Service BentoML minimal"

@@ -1,0 +1,24 @@
+# Environnements virtuels
+.venv/
+venv/
+*/.venv/
+*/venv/
+
+# Fichiers Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# MLflow / BentoML
+mlflow/
+ml/MLflow/mlruns/
+ml/bentoML/.venv/
+
+# Configs et fichiers système
+.DS_Store
+.env
+*.log
+
+# VS Code
+.vscode/

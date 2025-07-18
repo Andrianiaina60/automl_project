@@ -1,0 +1,2 @@
+bentoml==1.1.7
+pydantic<2.0

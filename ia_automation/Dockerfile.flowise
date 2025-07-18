@@ -1,0 +1,10 @@
+# Dockerfile.flowise corrigé
+FROM node:22
+
+WORKDIR /app
+
+RUN npm install -g flowise@3.0.4 --legacy-peer-deps
+
+EXPOSE 3000
+
+CMD ["flowise", "start"]

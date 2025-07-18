@@ -1,0 +1,23 @@
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: fastapi/Dockerfile
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./fastapi:/app
+    networks:
+      - backend
+
+  mcp:
+    image: n8nio/n8n
+    container_name: mcp
+    ports:
+      - "5678:5678"
+    networks:
+      - backend
+
+networks:
+  backend:
