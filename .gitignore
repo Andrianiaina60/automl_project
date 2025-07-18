@@ -11,7 +11,7 @@ __pycache__/
 *.pyd
 
 # MLflow / BentoML
-mlflow/
+
 ml/MLflow/mlruns/
 ml/bentoML/.venv/
 
