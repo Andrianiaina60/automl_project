@@ -11,14 +11,16 @@ services:
     networks:
       - ml-network
 
-
   bentoml:
     build: ./bentoML
     container_name: bentoml
     ports:
       - "3000:3000"
+    environment:
+      - BENTOML_HOME=/app/bentoml_home
     volumes:
       - ./bentoML:/app
+      - bentoml_data:/app/bentoml_home
     depends_on:
       - mlflow
     networks:
@@ -36,6 +38,7 @@ services:
 
 volumes:
   mindsdb_data:
+  bentoml_data:  # Ajoutez cette ligne !
 
 networks:
   ml-network:
