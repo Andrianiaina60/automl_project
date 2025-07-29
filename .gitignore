@@ -1,25 +1,96 @@
+# # Environnements virtuels
+# .venv/
+# .bento/
+# venv/
+# */.venv/
+# */venv/
+
+# # Fichiers Python
+# __pycache__/
+# *.pyc
+# *.pyo
+# *.pyd
+
+# # MLflow / BentoML
+
+# ml/MLflow/mlruns/
+# ml/bentoML/.venv/
+
+# # Configs et fichiers système
+# .DS_Store
+# .env
+# *.log
+
+# # VS Code
+# .vscode/
+
 # Environnements virtuels
 .venv/
 .bento/
 venv/
 */.venv/
 */venv/
+env/
+ENV/
 
 # Fichiers Python
-__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.so
+.Python
+*.egg-info/
+dist/
+build/
 
 # MLflow / BentoML
-
 ml/MLflow/mlruns/
 ml/bentoML/.venv/
+mlruns/
+*.bentomodel
+*.bento
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Tests et coverage
+.pytest_cache/
+.coverage
+.tox/
+htmlcov/
+.nyc_output
 
 # Configs et fichiers système
 .DS_Store
 .env
+.env.local
+.env.*.local
 *.log
+*.pid
+*.seed
+*.pid.lock
 
-# VS Code
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini

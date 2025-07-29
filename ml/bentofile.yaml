@@ -1,0 +1,12 @@
+service: service.py:svc
+description: "Service BentoML minimal"
+labels:
+  owner: andry
+  project: automl_project
+include:
+  - "*.py"
+  - "requirements.txt"
+python:
+  requirements_txt: ./requirements.txt
+models:
+  - regressor_model:l4m5badjisj7gaav

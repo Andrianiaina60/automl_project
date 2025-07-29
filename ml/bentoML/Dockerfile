@@ -1,27 +1,33 @@
 FROM python:3.11-slim
 
-WORKDIR /app
-
-# Installer les dépendances système nécessaires
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
+    gcc \
+    g++ \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Mettre à jour pip
-RUN pip install --upgrade pip
+# Installer les packages Python
+RUN pip install --no-cache-dir \
+    bentoml==1.3.22 \
+    numpy==1.26.4 \
+    pandas==2.2.3 \
+    scikit-learn==1.5.2 \
+    pydantic==2.9.2
 
-# Copier le fichier requirements
-COPY requirements.txt .
+# Créer le répertoire de travail
+WORKDIR /app
 
-# Installer les dépendances Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Copier les fichiers nécessaires
+COPY bentofile.yaml ./
+COPY service.py ./
+COPY requirements.txt ./
 
-# Copier tous les fichiers
-COPY . .
+# IMPORTANT: Utiliser 'build' et non 'import'
+RUN bentoml build .
 
 # Exposer le port
 EXPOSE 3000
 
-# Commande par défaut pour BentoML 1.3
-CMD ["bentoml", "serve", "service.py:MyService", "--host", "0.0.0.0", "--port", "3000"]
+# Démarrer le service
+CMD ["bentoml", "serve", "--production", "--port", "3000"]

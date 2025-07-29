@@ -1,5 +1,16 @@
-service: service.py:svc
+# service: service.py:svc
 
+# description: "Service BentoML minimal"
+# labels:
+#   owner: andry
+#   project: automl_project
+# include:
+#   - "*.py"
+#   - "requirements.txt"
+# python:
+#   requirements_txt: ./requirements.txt
+
+service: service.py:MyService
 description: "Service BentoML minimal"
 labels:
   owner: andry
