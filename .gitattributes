@@ -1,0 +1,12 @@
+# For all text files, normalize line endings to LF in the repo, convert to CRLF on checkout for Windows
+* text=auto
+
+# For JSON or TSV, for exemple, for explicit control if besoin
+*.json text eol=lf
+*.tsv text eol=lf
+
+# Binaries (pour éviter les conversions)
+*.png binary
+*.jpg binary
+*.exe binary
+*.dll binary

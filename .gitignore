@@ -1,39 +1,113 @@
+# # # Environnements virtuels
+# # .venv/
+# # .bento/
+# # venv/
+# # */.venv/
+# # */venv/
+
+# # # Fichiers Python
+# # __pycache__/
+# # *.pyc
+# # *.pyo
+# # *.pyd
+
+# # # MLflow / BentoML
+
+# # ml/MLflow/mlruns/
+# # ml/bentoML/.venv/
+
+# # # Configs et fichiers système
+# # .DS_Store
+# # .env
+# # *.log
+
+# # # VS Code
+# # .vscode/
+
 # # Environnements virtuels
 # .venv/
 # .bento/
 # venv/
 # */.venv/
 # */venv/
+# env/
+# ENV/
 
 # # Fichiers Python
-# __pycache__/
+# **/__pycache__/
 # *.pyc
 # *.pyo
 # *.pyd
+# *.so
+# .Python
+# *.egg-info/
+# dist/
+# build/
 
 # # MLflow / BentoML
-
 # ml/MLflow/mlruns/
 # ml/bentoML/.venv/
+# mlruns/
+# *.bentomodel
+# *.bento
+
+# # Git
+# .git/
+# .gitignore
+# .github/
+
+# # Tests et coverage
+# .pytest_cache/
+# .coverage
+# .tox/
+# htmlcov/
+# .nyc_output
 
 # # Configs et fichiers système
 # .DS_Store
 # .env
+# .env.local
+# .env.*.local
 # *.log
+# *.pid
+# *.seed
+# *.pid.lock
 
-# # VS Code
+# # IDE
 # .vscode/
+# .idea/
+# *.swp
+# *.swo
+# *~
 
-# Environnements virtuels
+# # Documentation
+# docs/
+# README.md
+# *.md
+
+# # Docker
+# Dockerfile*
+# docker-compose*.yml
+# .dockerignore
+
+# # OS generated files
+# Thumbs.db
+# ehthumbs.db
+# Desktop.ini
+# Ignorer spécifiquement le venv Milvus
+ia_automation/venv_milvus/
+
+# Environnements virtuels Python généraux
 .venv/
-.bento/
 venv/
-*/.venv/
-*/venv/
 env/
 ENV/
+*/.venv/
+*/venv/
+*/env/
 
-# Fichiers Python
+# Fichiers Python compilés et caches
+__pycache__/
 **/__pycache__/
 *.pyc
 *.pyo
@@ -44,17 +118,39 @@ ENV/
 dist/
 build/
 
-# MLflow / BentoML
+# MLflow / BentoML spécifiques
 ml/MLflow/mlruns/
 ml/bentoML/.venv/
 mlruns/
 *.bentomodel
 *.bento
 
-# Git
-.git/
-.gitignore
-.github/
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Fichiers de logs et environnement
+*.log
+*.pid
+*.seed
+*.pid.lock
+.env
+.env.local
+.env.*.local
+
+# Système
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editeurs et IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # Tests et coverage
 .pytest_cache/
@@ -63,34 +159,16 @@ mlruns/
 htmlcov/
 .nyc_output
 
-# Configs et fichiers système
-.DS_Store
-.env
-.env.local
-.env.*.local
-*.log
-*.pid
-*.seed
-*.pid.lock
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Documentation
+# Documentation (à ajuster à tes besoins)
 docs/
 README.md
 *.md
 
-# Docker
-Dockerfile*
-docker-compose*.yml
-.dockerignore
+# Git lui-même
+.git/
+.gitignore
+.github/
 
-# OS generated files
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+# Fichiers temporaires divers
+*.tmp
+*.temp

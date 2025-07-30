@@ -10,7 +10,7 @@
 # python:
 #   requirements_txt: ./requirements.txt
 
-service: service.py:MyService
+service: "service:svc"
 description: "Service BentoML minimal"
 labels:
   owner: andry

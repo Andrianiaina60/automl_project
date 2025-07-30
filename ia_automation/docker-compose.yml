@@ -1,4 +1,119 @@
 
+# services:
+
+#   flowise:
+#     image: flowiseai/flowise:latest
+#     container_name: flowise
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       FLOWISE_USERNAME: admin
+#       FLOWISE_PASSWORD: admin123
+#       FLOWISE_SECRETKEY: supersecretkey
+#     volumes:
+#       - ./data/flowise:/root/.flowise
+#       - ./flowise-flows:/app/flows
+#     restart: unless-stopped
+#     networks:
+#       - employe_network
+
+#   n8n:
+#     image: n8nio/n8n
+#     container_name: n8n
+#     ports:
+#       - "5678:5678"
+#     environment:
+#       WEBHOOK_URL: http://localhost:5678/
+#       N8N_BASIC_AUTH_ACTIVE: "true"
+#       N8N_BASIC_AUTH_USER: admin
+#       N8N_BASIC_AUTH_PASSWORD: admin
+#       GENERIC_TIMEZONE: Europe/Paris
+#       N8N_RUNNERS_ENABLED: "true"
+#       N8N_PERSONALIZATION_ENABLED: "false"
+#     volumes:
+#       - n8n_data:/home/node/.n8n
+#     restart: unless-stopped
+#     networks:
+#       - employe_network
+
+#   services:
+#     qdrant:
+#       image: qdrant/qdrant:v1.7.4
+#       container_name: qdrant
+#       ports:
+#         - "6333:6333"
+#         - "6334:6334"
+#       environment:
+#         QDRANT__WEB_UI__ENABLED: "true"
+#         #QDRANT__SERVICE__API_KEY: changeme  # désactivé temporairement
+#       volumes:
+#         - ./qdrant_storage:/qdrant/storage
+#       restart: unless-stopped
+#       networks:
+#         - employe_network
+
+
+#   milvus-etcd:
+#     image: quay.io/coreos/etcd:v3.5.5
+#     container_name: milvus-etcd
+#     environment:
+#       ETCD_UNSUPPORTED_ARCH: "arm64"  # à supprimer si tu n'es pas sur ARM, ou adapter
+#     volumes:
+#       - etcd_data:/etcd
+#     restart: unless-stopped
+#     networks:
+#       - employe_network
+
+#   milvus-minio:
+#     image: minio/minio:RELEASE.2023-06-23T20-26-00Z
+#     container_name: milvus-minio
+#     environment:
+#       MINIO_ROOT_USER: minioadmin
+#       MINIO_ROOT_PASSWORD: minioadmin
+#     command: server /data --console-address ":9001"
+#     volumes:
+#       - minio_data:/data
+#     ports:
+#       - "9000:9000"   # API S3
+#       - "9001:9001"   # Console web MinIO
+#     restart: unless-stopped
+#     networks:
+#       - employe_network
+
+#   milvus:
+#     image: milvusdb/milvus:v2.2.13
+#     container_name: milvus-standalone
+#     command: ["milvus", "run", "standalone"]
+#     environment:
+#       ETCD_ENDPOINTS: milvus-etcd:2379
+#       MINIO_ADDRESS: milvus-minio:9000
+#       MINIO_ROOT_USER: minioadmin
+#       MINIO_ROOT_PASSWORD: minioadmin
+#       MILVUS_LOG_LEVEL: info
+#     depends_on:
+#       - milvus-etcd
+#       - milvus-minio
+#     ports:
+#       - "19530:19530"  # port gRPC Milvus
+#       - "9091:9091"    # port HTTP REST (API interne)
+#     volumes:
+#       - milvus_data:/var/lib/milvus
+#     restart: unless-stopped
+#     networks:
+#       - employe_network
+
+# networks:
+#   ml_network:
+#     external: true
+
+# volumes:
+#   qdrant_storage:
+#   n8n_data:
+#   milvus_data:
+#   etcd_data:
+#   minio_data:
+
+
 services:
   flowise:
     image: flowiseai/flowise:latest
@@ -6,51 +121,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - FLOWISE_USERNAME=admin
-      - FLOWISE_PASSWORD=admin123
-      - FLOWISE_SECRETKEY=supersecretkey
+      FLOWISE_USERNAME: admin
+      FLOWISE_PASSWORD: admin123
+      FLOWISE_SECRETKEY: supersecretkey
     volumes:
       - ./data/flowise:/root/.flowise
       - ./flowise-flows:/app/flows
     restart: unless-stopped
     networks:
-      - employe_network
-
-
-  
-  qdrant:
-    image: qdrant/qdrant:v1.7.4  # Version stable avec dashboard
-    container_name: qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    environment:
-      - QDRANT__WEB_UI__ENABLED=true
-    volumes:
-      - ./qdrant_storage:/qdrant/storage
-    restart: unless-stopped
-    networks:
-      - employe_network
-
-  # qdrant:
-  #   image: qdrant/qdrant:latest
-  #   container_name: qdrant
-  #   ports:
-  #     - "6333:6333"
-  #     - "6334:6334"
-  #   environment:
-  #     - QDRANT__WEB_UI__ENABLED=true
-  #     - QDRANT__SERVICE__HTTP_HOST=0.0.0.0
-  #     - QDRANT__SERVICE__HTTP_PORT=6333
-  #   volumes:
-  #     - qdrant_storage:/qdrant/storage
-  #   restart: unless-stopped
-  #   networks:
-  #     - employe_network
-
-  # volumes:
-  #   qdrant_storage:
-
+      - ml_network
 
   n8n:
     image: n8nio/n8n
@@ -58,26 +137,91 @@ services:
     ports:
       - "5678:5678"
     environment:
-      - WEBHOOK_URL=http://localhost:5678/
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin
-      - GENERIC_TIMEZONE=Africa/Nairobi
-      - N8N_RUNNERS_ENABLED=true
-      - N8N_PERSONALIZATION_ENABLED=false
+      WEBHOOK_URL: http://localhost:5678/
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: admin
+      GENERIC_TIMEZONE: Europe/Paris
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_PERSONALIZATION_ENABLED: "false"
     volumes:
       - n8n_data:/home/node/.n8n
     restart: unless-stopped
     networks:
-      - employe_network
+      - ml_network
 
-networks:
-  employe_network:
-    driver: bridge
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      QDRANT__WEB_UI__ENABLED: "true"
+      #QDRANT__SERVICE__API_KEY: changeme  # désactivée pour test UI
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - ml_network
+
+  milvus-etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: milvus-etcd
+    environment:
+      ETCD_UNSUPPORTED_ARCH: "arm64"  # adapte ou supprime si pas ARM
+    volumes:
+      - etcd_data:/etcd
+    restart: unless-stopped
+    networks:
+      - ml_network
+
+  milvus-minio:
+    image: minio/minio:RELEASE.2023-06-23T20-26-00Z
+    container_name: milvus-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: unless-stopped
+    networks:
+      - ml_network
+
+  milvus:
+    image: milvusdb/milvus:v2.2.13
+    container_name: milvus-standalone
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: milvus-etcd:2379
+      MINIO_ADDRESS: milvus-minio:9000
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MILVUS_LOG_LEVEL: info
+    depends_on:
+      - milvus-etcd
+      - milvus-minio
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus_data:/var/lib/milvus
+    restart: unless-stopped
+    networks:
+      - ml_network
 
 volumes:
-  qdrant_data:
+  qdrant_storage:
   n8n_data:
+  milvus_data:
+  etcd_data:
+  minio_data:
 
-
+networks:
+  ml_network:
+    external: true
 
