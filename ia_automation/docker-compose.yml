@@ -1,118 +1,5 @@
 
-# services:
-
-#   flowise:
-#     image: flowiseai/flowise:latest
-#     container_name: flowise
-#     ports:
-#       - "3000:3000"
-#     environment:
-#       FLOWISE_USERNAME: admin
-#       FLOWISE_PASSWORD: admin123
-#       FLOWISE_SECRETKEY: supersecretkey
-#     volumes:
-#       - ./data/flowise:/root/.flowise
-#       - ./flowise-flows:/app/flows
-#     restart: unless-stopped
-#     networks:
-#       - employe_network
-
-#   n8n:
-#     image: n8nio/n8n
-#     container_name: n8n
-#     ports:
-#       - "5678:5678"
-#     environment:
-#       WEBHOOK_URL: http://localhost:5678/
-#       N8N_BASIC_AUTH_ACTIVE: "true"
-#       N8N_BASIC_AUTH_USER: admin
-#       N8N_BASIC_AUTH_PASSWORD: admin
-#       GENERIC_TIMEZONE: Europe/Paris
-#       N8N_RUNNERS_ENABLED: "true"
-#       N8N_PERSONALIZATION_ENABLED: "false"
-#     volumes:
-#       - n8n_data:/home/node/.n8n
-#     restart: unless-stopped
-#     networks:
-#       - employe_network
-
-#   services:
-#     qdrant:
-#       image: qdrant/qdrant:v1.7.4
-#       container_name: qdrant
-#       ports:
-#         - "6333:6333"
-#         - "6334:6334"
-#       environment:
-#         QDRANT__WEB_UI__ENABLED: "true"
-#         #QDRANT__SERVICE__API_KEY: changeme  # désactivé temporairement
-#       volumes:
-#         - ./qdrant_storage:/qdrant/storage
-#       restart: unless-stopped
-#       networks:
-#         - employe_network
-
-
-#   milvus-etcd:
-#     image: quay.io/coreos/etcd:v3.5.5
-#     container_name: milvus-etcd
-#     environment:
-#       ETCD_UNSUPPORTED_ARCH: "arm64"  # à supprimer si tu n'es pas sur ARM, ou adapter
-#     volumes:
-#       - etcd_data:/etcd
-#     restart: unless-stopped
-#     networks:
-#       - employe_network
-
-#   milvus-minio:
-#     image: minio/minio:RELEASE.2023-06-23T20-26-00Z
-#     container_name: milvus-minio
-#     environment:
-#       MINIO_ROOT_USER: minioadmin
-#       MINIO_ROOT_PASSWORD: minioadmin
-#     command: server /data --console-address ":9001"
-#     volumes:
-#       - minio_data:/data
-#     ports:
-#       - "9000:9000"   # API S3
-#       - "9001:9001"   # Console web MinIO
-#     restart: unless-stopped
-#     networks:
-#       - employe_network
-
-#   milvus:
-#     image: milvusdb/milvus:v2.2.13
-#     container_name: milvus-standalone
-#     command: ["milvus", "run", "standalone"]
-#     environment:
-#       ETCD_ENDPOINTS: milvus-etcd:2379
-#       MINIO_ADDRESS: milvus-minio:9000
-#       MINIO_ROOT_USER: minioadmin
-#       MINIO_ROOT_PASSWORD: minioadmin
-#       MILVUS_LOG_LEVEL: info
-#     depends_on:
-#       - milvus-etcd
-#       - milvus-minio
-#     ports:
-#       - "19530:19530"  # port gRPC Milvus
-#       - "9091:9091"    # port HTTP REST (API interne)
-#     volumes:
-#       - milvus_data:/var/lib/milvus
-#     restart: unless-stopped
-#     networks:
-#       - employe_network
-
-# networks:
-#   ml_network:
-#     external: true
-
-# volumes:
-#   qdrant_storage:
-#   n8n_data:
-#   milvus_data:
-#   etcd_data:
-#   minio_data:
-
+version: '3.5'
 
 services:
   flowise:
@@ -132,7 +19,7 @@ services:
       - ml_network
 
   n8n:
-    image: n8nio/n8n
+    image: n8nio/n8n:1.50.0
     container_name: n8n
     ports:
       - "5678:5678"
@@ -151,66 +38,79 @@ services:
       - ml_network
 
   qdrant:
-    image: qdrant/qdrant:v1.7.4
+    image: qdrant/qdrant:v1.9.1
     container_name: qdrant
     ports:
       - "6333:6333"
       - "6334:6334"
     environment:
       QDRANT__WEB_UI__ENABLED: "true"
-      #QDRANT__SERVICE__API_KEY: changeme  # désactivée pour test UI
     volumes:
       - ./qdrant_storage:/qdrant/storage
     restart: unless-stopped
     networks:
       - ml_network
 
-  milvus-etcd:
-    image: quay.io/coreos/etcd:v3.5.5
+  etcd:
     container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.18
     environment:
-      ETCD_UNSUPPORTED_ARCH: "arm64"  # adapte ou supprime si pas ARM
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - etcd_data:/etcd
-    restart: unless-stopped
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
     networks:
       - ml_network
 
-  milvus-minio:
-    image: minio/minio:RELEASE.2023-06-23T20-26-00Z
-    container_name: milvus-minio
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    restart: unless-stopped
-    networks:
-      - ml_network
-
-  milvus:
-    image: milvusdb/milvus:v2.2.13
+  standalone:
     container_name: milvus-standalone
+    image: milvusdb/milvus:v2.5.14
     command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
     environment:
-      ETCD_ENDPOINTS: milvus-etcd:2379
-      MINIO_ADDRESS: milvus-minio:9000
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      ETCD_ENDPOINTS: etcd:2379
+      # Si tu utilises MinIO, décommente la ligne suivante et adapte l'adresse si besoin
+      # MINIO_ADDRESS: milvus-minio:9000
+      # MINIO_ROOT_USER: minioadmin
+      # MINIO_ROOT_PASSWORD: minioadmin
       MILVUS_LOG_LEVEL: info
     depends_on:
-      - milvus-etcd
-      - milvus-minio
+      - etcd
+      # - milvus-minio  # Décommente si tu utilises MinIO
+    volumes:
+      - ./milvus/milvus.yaml:/milvus/configs/milvus.yaml:ro
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     ports:
       - "19530:19530"
       - "9091:9091"
-    volumes:
-      - milvus_data:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
     restart: unless-stopped
+    networks:
+      - ml_network
+
+  attu:
+    container_name: milvus-attu
+    image: zilliz/attu:v2.4.9
+    restart: always
+    environment:
+      - MILVUS_URL=standalone:19530
+      - DEFAULT_USER=root
+    ports:
+      - "8001:3000"
     networks:
       - ml_network
 
@@ -224,4 +124,3 @@ volumes:
 networks:
   ml_network:
     external: true
-

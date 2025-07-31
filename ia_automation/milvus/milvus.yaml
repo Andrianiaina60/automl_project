@@ -1,0 +1,58 @@
+minio:
+  address: minio:9000
+  accessKeyID: milvus_user
+  secretAccessKey: ovao
+  useSSL: false
+  bucketName: milvus
+  rootPath: files
+# AJOUT DE CETTE SECTION POUR LA SÉCURITÉ
+common:
+  security:
+    # Active l'authentification. Milvus exigera un nom d'utilisateur et un mot de passe.
+    authorizationEnabled: true
+    # Définit le mot de passe par défaut pour l'utilisateur 'root'.
+    # CHANGEZ CE MOT DE PASSE pour quelque chose de sécurisé !
+    defaultRootPassword: "ovao" 
+
+
+# Spécifie le chemin pour le stockage local (cache)
+localStorage:
+  path: /var/lib/milvus/data/
+
+# Spécifie le type de Message Queue à utiliser
+mq:
+  type: rocksmq
+
+# --- AJOUT DE CETTE SECTION POUR CORRIGER LE NOUVEAU CRASH ---
+# Spécifie où rocksmq doit stocker ses propres données.
+# Ce chemin est à l'intérieur du conteneur et est mappé par notre volume.
+rocksmq:
+  path: /var/lib/milvus/rdb_data
+
+# --- CONSERVÉ POUR ÉVITER LES CONFLITS DE PORTS INTERNES ---
+proxy:
+  port: 19530
+
+rootCoord:
+  port: 53100
+
+dataCoord:
+  port: 13333
+
+queryCoord:
+  port: 19531
+
+indexCoord:
+  port: 31000
+
+dataNode:
+  port: 21124
+
+queryNode:
+  port: 21123
+
+indexNode:
+  port: 21121
+
+streamingNode:
+  port: 22222

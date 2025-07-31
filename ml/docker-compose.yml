@@ -1,53 +1,5 @@
-# services:
-#   mlflow:
-#     build:
-#       context: ./MLflow
-#       dockerfile: Dockerfile
-#     container_name: mlflow
-#     ports:
-#       - "5000:5000"
-#     volumes:
-#       - ./MLflow:/app
-#     networks:
-#       - ml-network
-
-#   bentoml:
-#     build: ./bentoML
-#     container_name: bentoml
-#     ports:
-#       - "3000:3000"
-#     environment:
-#       - BENTOML_HOME=/app/bentoml_home
-#     volumes:
-#       - ./bentoML:/app
-#       - bentoml_data:/app/bentoml_home
-#     depends_on:
-#       - mlflow
-#     networks:
-#       - ml-network
-
-#   mindsdb:
-#     image: mindsdb/mindsdb
-#     container_name: mindsdb
-#     ports:
-#       - "47334:47334"
-#     volumes:
-#       - mindsdb_data:/root/mindsdb
-#     networks:
-#       - ml-network
-
-# volumes:
-#   mindsdb_data:
-#   bentoml_data:  # Ajoutez cette ligne !
-
-# networks:
-#   ml-network:
-#     driver: bridge
-
-
 
 services:
-
   mlflow:
     build:
       context: ./MLflow
@@ -66,7 +18,7 @@ services:
       dockerfile: Dockerfile
     container_name: bentoml
     ports:
-      - "3001:3000"  # Host port 3001 redirigé vers 3000 du container
+      - "3001:3000"
     environment:
       BENTOML_HOME: /app/bentoml_home
     volumes:
@@ -77,21 +29,8 @@ services:
     networks:
       - ml_network
 
-  # mindsdb:
-  #   image: mindsdb/mindsdb:latest
-  #   container_name: mindsdb
-  #   ports:
-  #     - "8000:8000"    # Interface web
-  #     - "47334:47334"  # HTTP API
-  #     - "47335:47335"  # MySQL API
-  #   volumes:
-  #     - mindsdb_data:/root/mindsdb
-  #   environment:
-  #     - MINDSDB_CONFIG_PATH=/root/mindsdb
-  #   networks:
-  #     - ml_network
-  #   restart: unless-stopped
   mindsdb:
+    # image: mindsdb/mindsdb:24.6.5
     image: mindsdb/mindsdb:latest
     container_name: mindsdb
     ports:
@@ -118,8 +57,8 @@ services:
     image: clickhouse/clickhouse-server:24.8
     container_name: clickhouse
     ports:
-      - "8123:8123"   # HTTP API
-      - "9100:9000"   # Native protocol (attention à la redirection de port)
+      - "8123:8123"
+      - "9100:9000"
     volumes:
       - clickhouse_data:/var/lib/clickhouse
       - clickhouse_logs:/var/log/clickhouse-server
